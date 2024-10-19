@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -237,7 +238,11 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(schema)
 }
 
+var address *string = flag.String("address", ":8000", "address for a web application")
+
 func main() {
+	flag.Parse()
+
 	var err error
 	db, err = sql.Open("sqlite3", "database/db.db")
 
@@ -256,5 +261,5 @@ func main() {
 	http.HandleFunc("/domains/check", checkHandler)
 	http.HandleFunc("/domains/delete", deleteHandler)
 
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(*address, nil))
 }
